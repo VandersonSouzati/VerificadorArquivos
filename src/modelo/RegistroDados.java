@@ -1,7 +1,6 @@
 package modelo;
 
 public class RegistroDados {
-	private String id;
 	private String unidade;
 	private String mapeamento;
 	private String arquivo;
@@ -14,10 +13,9 @@ public class RegistroDados {
 
 	}
 
-	public RegistroDados(String id, String unidade, String mapeamento, String arquivo, String dataVerificacao,
+	public RegistroDados(String unidade, String mapeamento, String arquivo, String dataVerificacao,
 			String dataModificacao, String tipoBusca, String verificar) {
 		super();
-		this.id = id;
 		this.unidade = unidade;
 		this.mapeamento = mapeamento;
 		this.arquivo = arquivo;
@@ -25,14 +23,6 @@ public class RegistroDados {
 		this.dataModificacao = dataModificacao;
 		this.tipoBusca = tipoBusca;
 		this.verificar = verificar;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getUnidade() {
@@ -92,8 +82,71 @@ public class RegistroDados {
 	}
 
 	public String toString(){
-       return this.id+";"+this.unidade+";"+this.mapeamento+";"+this.arquivo+";"+
+       return this.unidade+";"+this.mapeamento+";"+this.arquivo+";"+
 	          this.dataVerificacao+";"+this.dataModificacao+";"+this.tipoBusca+";"+
     		  this.verificar;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((arquivo == null) ? 0 : arquivo.hashCode());
+		result = prime * result + ((dataModificacao == null) ? 0 : dataModificacao.hashCode());
+		result = prime * result + ((dataVerificacao == null) ? 0 : dataVerificacao.hashCode());
+		result = prime * result + ((mapeamento == null) ? 0 : mapeamento.hashCode());
+		result = prime * result + ((tipoBusca == null) ? 0 : tipoBusca.hashCode());
+		result = prime * result + ((unidade == null) ? 0 : unidade.hashCode());
+		result = prime * result + ((verificar == null) ? 0 : verificar.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RegistroDados other = (RegistroDados) obj;
+		if (arquivo == null) {
+			if (other.arquivo != null)
+				return false;
+		} else if (!arquivo.equals(other.arquivo))
+			return false;
+		if (dataModificacao == null) {
+			if (other.dataModificacao != null)
+				return false;
+		} else if (!dataModificacao.equals(other.dataModificacao))
+			return false;
+		if (dataVerificacao == null) {
+			if (other.dataVerificacao != null)
+				return false;
+		} else if (!dataVerificacao.equals(other.dataVerificacao))
+			return false;
+		if (mapeamento == null) {
+			if (other.mapeamento != null)
+				return false;
+		} else if (!mapeamento.equals(other.mapeamento))
+			return false;
+		if (tipoBusca == null) {
+			if (other.tipoBusca != null)
+				return false;
+		} else if (!tipoBusca.equals(other.tipoBusca))
+			return false;
+		if (unidade == null) {
+			if (other.unidade != null)
+				return false;
+		} else if (!unidade.equals(other.unidade))
+			return false;
+		if (verificar == null) {
+			if (other.verificar != null)
+				return false;
+		} else if (!verificar.equals(other.verificar))
+			return false;
+		return true;
+	}
+	
+	
 }

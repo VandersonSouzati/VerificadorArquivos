@@ -28,6 +28,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import modelo.RegistroDados;
+import operacoes.RegistroDadosOperacoes;
+
 public class TelaPrincipal extends JFrame {
 	private JButton btnGerarDados, btnMapeamento, btnArquivos, btnAbrir, btnRestaurar;
 	private Container container;
@@ -44,6 +47,14 @@ public class TelaPrincipal extends JFrame {
 	private JTextField tfNumero, tfTotal, tfUnidade, tfMapeamento, tfArquivo;
 	private JComboBox cbUnidades, cbMapeamentos, cbArquivos;
 	private Font fontBotoesMenu, fontBotoesPainel;
+	
+	//Tela cadastro
+	private JLabel lbCadUnidade, lbCadMapeamento, lbCadArquivo;
+	private JCheckBox ckParcial;
+	private JTextField txUnidade, txMapeamento, txArquivo; 
+	private JButton btnGravar = new JButton("Gravar");
+	//Fim tela Cadastrado
+	
 	private String[] GerarDados = { "Todas", "001", "002", "003", "004", "005", "006", "007", "008", "009", "010",
 			"011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022" };
 	private String[] listaMapeamentos = { "Todos os Mapeamentos: ", "\\serverunl1\\rp\\import\\",
@@ -260,19 +271,21 @@ public class TelaPrincipal extends JFrame {
 		frameCadastro = new JFrame();
 		frameCadastro.setLayout(null);
 		frameCadastro.setBounds(0, 0, 500, 200);
-		JLabel lbUnidade = new JLabel("Unidade:");
-		JLabel lbMapeamento = new JLabel("Mapeamento:");
-		JLabel lbArquivo = new JLabel("Arquivo:");
-		JCheckBox ckParcial = new JCheckBox("Buscar por parte do nome ?");
-		JTextField txUnidade = new JTextField();
-		JTextField txMapeamento = new JTextField();
-		JTextField txArquivo = new JTextField();
-		JButton btnGravar = new JButton("Gravar");
-		lbUnidade.setBounds(10, 10, 70, 20);
+		
+		lbCadUnidade    = new JLabel("Unidade:");
+		lbCadMapeamento = new JLabel("Mapeamento:");
+		lbCadArquivo    = new JLabel("Arquivo:");
+		ckParcial       = new JCheckBox("Buscar por parte do nome ?");
+		txUnidade       = new JTextField();
+		txMapeamento    = new JTextField();
+		txArquivo       = new JTextField();
+		btnGravar       = new JButton("Gravar");
+		
+		lbCadUnidade.setBounds(10, 10, 70, 20);
 		txUnidade.setBounds(100, 10, 80, 20);
-		lbMapeamento.setBounds(10, 40, 100, 20);
+		lbCadMapeamento.setBounds(10, 40, 100, 20);
 		txMapeamento.setBounds(100, 40, 240, 20);
-		lbArquivo.setBounds(10, 70, 70, 20);
+		lbCadArquivo.setBounds(10, 70, 70, 20);
 		txArquivo.setBounds(100, 70, 170, 20);
 		ckParcial.setBounds(280, 70, 200, 20);
 		btnGravar.setBounds(330, 130, 150, 30);
@@ -288,14 +301,26 @@ public class TelaPrincipal extends JFrame {
 		frameCadastro.setLocationRelativeTo(framePrincipal);
 		frameCadastro.setVisible(true);
 
-		btnGravar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		btnGravar.addActionListener(p->inserirDados());
 
-			}
-		});
-
+		
 	}
 
+	public void inserirDados() {
+		RegistroDados registro = new RegistroDados();
+		registro.setUnidade(txUnidade.getText());
+		registro.setMapeamento(txMapeamento.getText());
+		registro.setArquivo(txArquivo.getText());
+		registro.setDataModificacao(null);
+		registro.setDataVerificacao(null);
+		registro.setTipoBusca((ckParcial.isEnabled())?"SIM": "NAO");
+		registro.setVerificar("SIM");
+		
+		RegistroDadosOperacoes operacoes = new RegistroDadosOperacoes();
+		operacoes.inserirDados(registro);
+		
+	}
+	
 	public void mensagem() {
 		if (dialog != null) {
 			dialog.dispose();
