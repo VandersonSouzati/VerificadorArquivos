@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -47,17 +48,17 @@ public class TelaPrincipal extends JFrame {
 	private JTextField tfNumero, tfTotal, tfUnidade, tfMapeamento, tfArquivo;
 	private JComboBox cbUnidades, cbMapeamentos, cbArquivos;
 	private Font fontBotoesMenu, fontBotoesPainel;
-	
-	//Tela cadastro
+
+	// Tela cadastro
 	private JLabel lbCadUnidade, lbCadMapeamento, lbCadArquivo;
 	private JCheckBox ckParcial;
-	private JTextField txUnidade, txMapeamento, txArquivo; 
+	private JTextField txUnidade, txMapeamento, txArquivo;
 	private JButton btnGravar = new JButton("Gravar");
-	//Fim tela Cadastrado
-	
+	// Fim tela Cadastrado
+
 	private String[] GerarDados = { "Todas", "001", "002", "003", "004", "005", "006", "007", "008", "009", "010",
 			"011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022" };
-	private String[] listaMapeamentos = { "Todos os Mapeamentos: ", "\\serverunl1\\rp\\import\\",
+	private String[] listaMapeamentos = { "Todos Mapeamentos: ", "\\serverunl1\\rp\\import\\",
 			"\\serverunl2\\rp\\import\\", "\\serverunl3\\rp\\import\\", "\\serverunl4\\rp\\import\\",
 			"\\serverunl5\\rp\\import\\", "\\serverunl6\\rp\\import\\", "\\serverunl7\\rp\\import\\",
 			"\\serverunl8\\rp\\import\\", "\\serverunl9\\rp\\import\\", "\\serverunl10\\rp\\import\\",
@@ -66,7 +67,8 @@ public class TelaPrincipal extends JFrame {
 			"\\serverunl17\\rp\\import\\", "\\serverunl18\\rp\\import\\", "\\serverunl19\\rp\\import\\",
 			"\\serverunl20\\rp\\import\\", "\\serverunl21\\rp\\import\\", "\\serverunl22\\rp\\import\\" };
 	private String[] listaArquivos = { "Todos Arquivos", "Tirateima.txt", "ItensMGV.txt", "ProdGer.exp(Parcial)", };
-	DecimalFormat df = new DecimalFormat("#,###.00");
+	private DecimalFormat df = new DecimalFormat("#,###.00");
+	private RegistroDadosOperacoes op = new RegistroDadosOperacoes();
 
 	public TelaPrincipal() {
 		inicializarComponentesPainelCentral();
@@ -78,7 +80,7 @@ public class TelaPrincipal extends JFrame {
 
 	public void inicializarComponentes() {
 		setTitle("Verificador de Arquivos");
-		setBounds(0, 0, 810, 600);
+		setBounds(0, 0, 810, 620);
 		setLayout(new BorderLayout());
 		container = getContentPane();
 		container.add("Center", pnPrincipal);
@@ -110,8 +112,8 @@ public class TelaPrincipal extends JFrame {
 		btRemover.setToolTipText("Remove os itens selecionados");
 		btnVerificar = new JButton("Verificar");
 		btnAbrir = new JButton("Abrir Pasta");
-		btnRestaurar = new JButton("Restaurar");
-		btnGerarDados = new JButton("GerarDados");
+		btnRestaurar = new JButton("Aplicativo Old");
+		btnGerarDados = new JButton("Restaurar Dados");
 
 		lbUnidade.setBounds(15, 10, 100, 25);
 		cbUnidades.setBounds(15, 35, 80, 25);
@@ -130,12 +132,12 @@ public class TelaPrincipal extends JFrame {
 
 		btnNovoRegistro.setBounds(560, 80, 100, 25);
 		btRemover.setBounds(670, 80, 100, 25);
-		btnRestaurar.setBounds(640, 505, 120, 30);
-		btnGerarDados.setBounds(500, 505, 120, 30);
+		btnRestaurar.setBounds(645, 540, 120, 30);
+		btnGerarDados.setBounds(500, 540, 130, 30);
 
 		pnPrincipal = new JPanel();
 		pnPrincipal.setLayout(null);
-		pnPrincipal.setBounds(0, 40, 810, 500);
+		pnPrincipal.setBounds(0, 40, 810, 530);
 		pnPrincipal.add(lbUnidade);
 		pnPrincipal.add(cbUnidades);
 		pnPrincipal.add(lbArquivo);
@@ -181,7 +183,7 @@ public class TelaPrincipal extends JFrame {
 		table.setBackground(Color.decode("#AAFFAA"));
 		scrollTable.setViewportView(table);
 		pnTable.add(scrollTable);
-		pnTable.setBounds(10, 100, 760, 400);
+		pnTable.setBounds(10, 100, 760, 430);
 		pnPrincipal.add(pnTable);
 		add(pnPrincipal);
 	}
@@ -194,11 +196,11 @@ public class TelaPrincipal extends JFrame {
 
 		btRemover.addActionListener(p -> removeSelecionados());
 
-		cbUnidades.addActionListener(p -> atualizaDados(cbUnidades.getSelectedItem().toString()));
+		cbUnidades.addActionListener(p -> atualizaDadosComboBox("unidade"));
 
-		cbArquivos.addActionListener(p -> atualizaDados(cbArquivos.getSelectedItem().toString()));
+		cbArquivos.addActionListener(p -> atualizaDadosComboBox("arquivo"));
 
-		cbMapeamentos.addActionListener(p -> atualizaDados(cbMapeamentos.getSelectedItem().toString()));
+		cbMapeamentos.addActionListener(p -> atualizaDadosComboBox("mapeamento"));
 
 		btnNovoRegistro.addActionListener(p -> telaCadastro());
 
@@ -237,13 +239,9 @@ public class TelaPrincipal extends JFrame {
 	}
 
 	private void gerarDados() {
-		String unidade = (String) "Undidade: " + cbUnidades.getSelectedItem();
-		String caminho = (String) cbMapeamentos.getSelectedItem();
-		String arquivo = (String) cbArquivos.getSelectedItem();
-
-		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
-		dtm.addRow(new Object[] { "109", unidade, caminho, arquivo, "20-01-2019 15:00:20", "26/01/20 20:20:20" });
-		limparCampos();
+		// Limpa os dados e reconstroi com o padrão
+		op.gerarDados();
+		carregaDadosTabela();
 	}
 
 	private void removeSelecionados() {
@@ -254,8 +252,65 @@ public class TelaPrincipal extends JFrame {
 		}
 	}
 
-	private void atualizaDados(String filtro) {
-		JOptionPane.showMessageDialog(null, filtro);
+	// Removendo todos os itens do Table
+	private void removeTodasLinhas() {
+		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+		for (int i = (dtm.getRowCount() - 1); i >= 0; --i) {
+			dtm.removeRow(i);
+		}
+	}
+
+	private void carregaDadosTabela() {
+		List<RegistroDados> listaRegistros = op.lerDados();
+		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+		removeTodasLinhas();
+		listaRegistros.stream().forEach(p -> adicionaLinhaTabela(dtm, p));
+
+	}
+
+	private void atualizaDadosComboBox(String filtro) {
+		List<RegistroDados> listaRegistros = op.lerDados();
+		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
+		removeTodasLinhas();
+		listaRegistros.stream()
+		              .filter(registro -> validaFiltro(registro, filtro))
+				      .forEach(registro -> adicionaLinhaTabela(dtm, registro));
+	}
+
+	private boolean validaFiltro(RegistroDados p, String filtro) {
+		  String unidade    = cbUnidades.getSelectedItem().toString();
+		  String arquivo    = cbArquivos.getSelectedItem().toString();
+		  String mapeamento = cbMapeamentos.getSelectedItem().toString();
+		  boolean retorno   = false;
+          if(filtro == "unidade") {
+        	  retorno =
+        			 (p.getUnidade().equalsIgnoreCase(unidade) || unidade.equalsIgnoreCase("Todas")) 
+         			 && 
+         			 (p.getArquivo().equalsIgnoreCase(arquivo) || arquivo.equalsIgnoreCase("Todos Arquivos"));
+          }
+          if(filtro =="arquivo") {
+        	  retorno = 
+        			  (p.getArquivo().equalsIgnoreCase(arquivo) || arquivo.equalsIgnoreCase("Todos Arquivos"))
+        	          &&
+        	          (p.getUnidade().equalsIgnoreCase(unidade) || unidade.equalsIgnoreCase("Todas")); 
+          }
+          /*
+          if(filtro == "mapeamento"){
+        	  retorno = (mapeamento.equalsIgnoreCase("Todos Mapeamentos"))?true:
+        	         p.getUnidade().equalsIgnoreCase(unidade) && 
+        			 p.getArquivo().equalsIgnoreCase(arquivo) && 
+        			 p.getMapeamento().equalsIgnoreCase(mapeamento);
+          }
+          */
+          return retorno;
+	}
+
+	private void adicionaLinhaTabela(DefaultTableModel dtm, RegistroDados p) {
+		String unidade = "Undidade: " + p.getUnidade();
+		String caminho = p.getMapeamento();
+		String arquivo = p.getArquivo();
+		String dataModificacao = op.buscaDataModificacao(p);
+		dtm.addRow(new Object[] { "109", unidade, caminho, arquivo, dataModificacao, "26/01/20 20:20:20" });
 	}
 
 	private void limparCampos() {
@@ -271,16 +326,16 @@ public class TelaPrincipal extends JFrame {
 		frameCadastro = new JFrame();
 		frameCadastro.setLayout(null);
 		frameCadastro.setBounds(0, 0, 500, 200);
-		
-		lbCadUnidade    = new JLabel("Unidade:");
+
+		lbCadUnidade = new JLabel("Unidade:");
 		lbCadMapeamento = new JLabel("Mapeamento:");
-		lbCadArquivo    = new JLabel("Arquivo:");
-		ckParcial       = new JCheckBox("Buscar por parte do nome ?");
-		txUnidade       = new JTextField();
-		txMapeamento    = new JTextField();
-		txArquivo       = new JTextField();
-		btnGravar       = new JButton("Gravar");
-		
+		lbCadArquivo = new JLabel("Arquivo:");
+		ckParcial = new JCheckBox("Buscar por parte do nome ?");
+		txUnidade = new JTextField();
+		txMapeamento = new JTextField();
+		txArquivo = new JTextField();
+		btnGravar = new JButton("Gravar");
+
 		lbCadUnidade.setBounds(10, 10, 70, 20);
 		txUnidade.setBounds(100, 10, 80, 20);
 		lbCadMapeamento.setBounds(10, 40, 100, 20);
@@ -301,9 +356,8 @@ public class TelaPrincipal extends JFrame {
 		frameCadastro.setLocationRelativeTo(framePrincipal);
 		frameCadastro.setVisible(true);
 
-		btnGravar.addActionListener(p->inserirDados());
+		btnGravar.addActionListener(p -> inserirDados());
 
-		
 	}
 
 	public void inserirDados() {
@@ -313,14 +367,14 @@ public class TelaPrincipal extends JFrame {
 		registro.setArquivo(txArquivo.getText());
 		registro.setDataModificacao(null);
 		registro.setDataVerificacao(null);
-		registro.setTipoBusca((ckParcial.isEnabled())?"SIM": "NAO");
+		registro.setTipoBusca((ckParcial.isEnabled()) ? "SIM" : "NAO");
 		registro.setVerificar("SIM");
-		
+
 		RegistroDadosOperacoes operacoes = new RegistroDadosOperacoes();
-		operacoes.inserirDados(registro);
-		
+		operacoes.inserirDados(registro, true);
+
 	}
-	
+
 	public void mensagem() {
 		if (dialog != null) {
 			dialog.dispose();
