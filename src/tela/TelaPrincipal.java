@@ -58,14 +58,7 @@ public class TelaPrincipal extends JFrame {
 
 	private String[] GerarDados = { "Todas", "001", "002", "003", "004", "005", "006", "007", "008", "009", "010",
 			"011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022" };
-	private String[] listaMapeamentos = { "Todos Mapeamentos: ", "\\serverunl1\\rp\\import\\",
-			"\\serverunl2\\rp\\import\\", "\\serverunl3\\rp\\import\\", "\\serverunl4\\rp\\import\\",
-			"\\serverunl5\\rp\\import\\", "\\serverunl6\\rp\\import\\", "\\serverunl7\\rp\\import\\",
-			"\\serverunl8\\rp\\import\\", "\\serverunl9\\rp\\import\\", "\\serverunl10\\rp\\import\\",
-			"\\serverunl11\\rp\\import\\", "\\serverunl12\\rp\\import\\", "\\serverunl13\\rp\\import\\",
-			"\\serverunl14\\rp\\import\\", "\\serverunl15\\rp\\import\\", "\\serverunl16\\rp\\import\\",
-			"\\serverunl17\\rp\\import\\", "\\serverunl18\\rp\\import\\", "\\serverunl19\\rp\\import\\",
-			"\\serverunl20\\rp\\import\\", "\\serverunl21\\rp\\import\\", "\\serverunl22\\rp\\import\\" };
+	private String[] listaMapeamentos = { "Todos Mapeamentos:" };
 	private String[] listaArquivos = { "Todos Arquivos", "Tirateima.txt", "ItensMGV.txt", "ProdGer.exp(Parcial)", };
 	private DecimalFormat df = new DecimalFormat("#,###.00");
 	private RegistroDadosOperacoes op = new RegistroDadosOperacoes();
@@ -74,6 +67,7 @@ public class TelaPrincipal extends JFrame {
 		inicializarComponentesPainelCentral();
 		inicializarComponentes();
 		definirEventosPainelCentral();
+		atualizaDadosComboBox("");
 	}
 
 	/***************************************************************************/
@@ -162,12 +156,12 @@ public class TelaPrincipal extends JFrame {
 		alinhaCentro.setHorizontalAlignment(SwingConstants.CENTER);
 		DefaultTableCellRenderer alinhaEsquerda = new DefaultTableCellRenderer();
 		alinhaEsquerda.setHorizontalAlignment(SwingConstants.LEFT);
-		table.getColumnModel().getColumn(0).setPreferredWidth(10);
+		table.getColumnModel().getColumn(0).setPreferredWidth(37);
 		table.getColumnModel().getColumn(0).setResizable(false);
 		table.getColumnModel().getColumn(1).setPreferredWidth(120);
 		table.getColumnModel().getColumn(1).setResizable(false);
 		// table.getColumnModel().getColumn(1).setCellRenderer(alinhaCentro);
-		table.getColumnModel().getColumn(2).setPreferredWidth(250);
+		table.getColumnModel().getColumn(2).setPreferredWidth(230);
 		table.getColumnModel().getColumn(2).setResizable(false);
 		table.getColumnModel().getColumn(3).setPreferredWidth(165);
 		table.getColumnModel().getColumn(3).setResizable(false);
@@ -186,6 +180,8 @@ public class TelaPrincipal extends JFrame {
 		pnTable.setBounds(10, 100, 760, 430);
 		pnPrincipal.add(pnTable);
 		add(pnPrincipal);
+		
+		
 	}
 
 	/*************************************************************************/
@@ -200,7 +196,7 @@ public class TelaPrincipal extends JFrame {
 
 		cbArquivos.addActionListener(p -> atualizaDadosComboBox("arquivo"));
 
-		cbMapeamentos.addActionListener(p -> atualizaDadosComboBox("mapeamento"));
+		//cbMapeamentos.addActionListener(p -> atualizaDadosComboBox("mapeamento"));
 
 		btnNovoRegistro.addActionListener(p -> telaCadastro());
 
@@ -281,7 +277,7 @@ public class TelaPrincipal extends JFrame {
 		  String unidade    = cbUnidades.getSelectedItem().toString();
 		  String arquivo    = cbArquivos.getSelectedItem().toString();
 		  String mapeamento = cbMapeamentos.getSelectedItem().toString();
-		  boolean retorno   = false;
+		  boolean retorno   = true;
           if(filtro == "unidade") {
         	  retorno =
         			 (p.getUnidade().equalsIgnoreCase(unidade) || unidade.equalsIgnoreCase("Todas")) 
@@ -294,23 +290,17 @@ public class TelaPrincipal extends JFrame {
         	          &&
         	          (p.getUnidade().equalsIgnoreCase(unidade) || unidade.equalsIgnoreCase("Todas")); 
           }
-          /*
-          if(filtro == "mapeamento"){
-        	  retorno = (mapeamento.equalsIgnoreCase("Todos Mapeamentos"))?true:
-        	         p.getUnidade().equalsIgnoreCase(unidade) && 
-        			 p.getArquivo().equalsIgnoreCase(arquivo) && 
-        			 p.getMapeamento().equalsIgnoreCase(mapeamento);
-          }
-          */
+          
           return retorno;
 	}
 
 	private void adicionaLinhaTabela(DefaultTableModel dtm, RegistroDados p) {
+		String id      = String.valueOf(p.getId());
 		String unidade = "Undidade: " + p.getUnidade();
 		String caminho = p.getMapeamento();
 		String arquivo = p.getArquivo();
 		String dataModificacao = op.buscaDataModificacao(p);
-		dtm.addRow(new Object[] { "109", unidade, caminho, arquivo, dataModificacao, "26/01/20 20:20:20" });
+		dtm.addRow(new Object[] { id, unidade, caminho, arquivo, dataModificacao, "26/01/20 20:20:20" });
 	}
 
 	private void limparCampos() {

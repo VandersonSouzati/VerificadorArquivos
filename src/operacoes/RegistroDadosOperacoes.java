@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -51,14 +52,14 @@ public class RegistroDadosOperacoes {
 			String linha = "";
 			while ((linha = bf.readLine()) != null) {
 				dados = linha.split(";");
-				
-				registro.setUnidade(dados[0]);
-				registro.setMapeamento(dados[1]);
-				registro.setArquivo(dados[2]);
-				registro.setDataModificacao(dados[3]);
+				registro.setId(dados[0]);
+				registro.setUnidade(dados[1]);
+				registro.setMapeamento(dados[2]);
+				registro.setArquivo(dados[3]);
 				registro.setDataModificacao(dados[4]);
-				registro.setTipoBusca(dados[5]);
-				registro.setVerificar(dados[6]);
+				registro.setDataModificacao(dados[5]);
+				registro.setTipoBusca(dados[6]);
+				registro.setVerificar(dados[7]);
            
 				listaRegistros.add(registro);
 				registro = new RegistroDados();
@@ -107,9 +108,10 @@ public class RegistroDadosOperacoes {
 		
 		// Zerando o arquivo cria uma linha com os valores null;
         inserirDados(registro, false);
-
+        Integer id=1; 
         for(int a=0; a< arquivos.length; a++) {
         	for(int c=0; c<unidades.length; c++) {
+        		registro.setId(String.valueOf(id));
         		registro.setUnidade(unidades[c]);
         		registro.setArquivo(arquivos[a]);
         		registro.setMapeamento(mapeamentos[c]);
@@ -119,6 +121,7 @@ public class RegistroDadosOperacoes {
         		registro.setVerificar("SIM");
         		inserirDados(registro, true);
         		registro = new RegistroDados();
+        		id++;
         	}
         }
 	}
@@ -132,5 +135,17 @@ public class RegistroDadosOperacoes {
 		File file = new File(mapeamento+"//"+arquivo);
 		dataFormatada = sdf.format(file.lastModified());
 		return dataFormatada;
+	}
+	
+	public void remover(int[] linha) {
+		List<RegistroDados> registros = lerDados();
+		
+		//Zerando o arquivo, cria um arquivo com uma linha null
+		RegistroDados registro = new RegistroDados();
+		inserirDados(registro, false);
+		//registros.stream()
+	}
+	public void filtroLinha(RegistroDados registro) {
+		
 	}
 }
